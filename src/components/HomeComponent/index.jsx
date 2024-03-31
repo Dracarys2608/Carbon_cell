@@ -21,14 +21,11 @@ import { duration } from "@mui/material";
 import MetaMaskSDK from "@metamask/sdk";
 
 const HomeComponent = () => {
-  new MetaMaskSDK({
-    useDeeplink: false,
-    communicationLayerPreference: "socket",
-  });
   const [graph, setGraph] = useState();
   const [prices, setPrices] = useState();
   const [connectedAccount, setConnectedAccount] = useState();
   const [networkId, setNetworkId] = useState("");
+  const [device, setDevice] = useState("");
 
   async function connectMetamask() {
     if (window.ethereum) {
@@ -63,6 +60,28 @@ const HomeComponent = () => {
       .catch((err) => {
         toast.error("Try again Later", { duration: 2000 });
       });
+
+    const ua = navigator.userAgent;
+    const tabletRegex = /(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i;
+    const mobRegex =
+      /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/;
+
+    if (tabletRegex.test(ua)) {
+      setDevice("mobile");
+      new MetaMaskSDK({
+        useDeeplink: false,
+        communicationLayerPreference: "socket",
+      });
+    }
+    if (mobRegex.test(ua)) {
+      setDevice("mobile");
+      new MetaMaskSDK({
+        useDeeplink: false,
+        communicationLayerPreference: "socket",
+      });
+    } else {
+      setDevice("desktop");
+    }
   }, []);
 
   const formatYAxisTick = (tick) => {
